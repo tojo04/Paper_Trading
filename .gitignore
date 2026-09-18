@@ -1,0 +1,30 @@
+# Environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# JavaScript
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.vite/
+
+# CMake / C++
+build/
+out/
+CMakeUserPresets.json
+
+# Test artifacts
+playwright-report/
+test-results/
+
+# Editors and operating systems
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+
