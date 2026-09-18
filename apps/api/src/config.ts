@@ -1,4 +1,14 @@
+import { fileURLToPath } from 'node:url';
+
+import { config as loadEnvironment } from 'dotenv';
 import { z } from 'zod';
+
+export function loadRootEnvironment(): void {
+  loadEnvironment({
+    path: fileURLToPath(new URL('../../.env', import.meta.url)),
+    quiet: true,
+  });
+}
 
 const environmentSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -7,7 +17,7 @@ const environmentSchema = z.object({
   DATABASE_URL: z
     .string()
     .min(1)
-    .default('postgresql://paper_terminal:local-development-only@localhost:5432/paper_terminal'),
+    .default('postgresql://paper_terminal:local-development-only@localhost:5433/paper_terminal'),
   WEB_ORIGIN: z.string().url().default('http://localhost:5173'),
 });
 

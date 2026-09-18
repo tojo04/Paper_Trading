@@ -45,7 +45,9 @@ If `corepack enable` cannot create system shims (common in a non-administrator W
 
 Copy `.env.example` to `.env`, then replace the development password in both `POSTGRES_PASSWORD`
 and `DATABASE_URL` with the same local value. Upstox values are not needed in the current fake-data
-phase and should remain empty. Never commit `.env`.
+phase and should remain empty. PostgreSQL uses host port `5433` by default to avoid collisions with
+a separately installed PostgreSQL service; change both `POSTGRES_PORT` and `DATABASE_URL` together
+if needed. Never commit `.env`.
 
 Start PostgreSQL and wait for it to become healthy:
 
@@ -53,6 +55,16 @@ Start PostgreSQL and wait for it to become healthy:
 docker compose up -d postgres
 docker compose ps
 ```
+
+Create the schema and load the repeatable paper-account/instrument defaults:
+
+```bash
+pnpm db:migrate
+pnpm db:seed
+```
+
+See [docs/database.md](docs/database.md) for the relational model, seed options, and disposable
+integration-test behavior.
 
 Start the API and web app together:
 
@@ -96,4 +108,5 @@ docker compose config
 There is no database schema, authentication, market-data feed, order flow, or matching logic yet.
 Those are deliberately reserved for later phases so each authority boundary can be tested before
 features depend on it.
+
 # Paper_Trading

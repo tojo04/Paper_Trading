@@ -1,23 +1,11 @@
-import { fileURLToPath } from 'node:url';
-
-import { config as loadEnvironment } from 'dotenv';
-import { Pool } from 'pg';
-
 import { buildApp } from './app.js';
-import { loadConfig } from './config.js';
+import { loadConfig, loadRootEnvironment } from './config.js';
+import { createDatabasePool } from './database/database-pool.js';
 import { createDatabaseReadinessCheck } from './health/database-readiness.js';
 
-loadEnvironment({
-  path: fileURLToPath(new URL('../../../.env', import.meta.url)),
-  quiet: true,
-});
-
+loadRootEnvironment();
 const config = loadConfig();
-const pool = new Pool({
-  connectionString: config.DATABASE_URL,
-  connectionTimeoutMillis: 2_000,
-  max: 5,
-});
+const pool = createDatabasePool(config.DATABASE_URL);
 
 const app = await buildApp({
   databaseReady: createDatabaseReadinessCheck(pool),
