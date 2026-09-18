@@ -31,6 +31,14 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
+    },
+    {
+      "name": "sanitizers",
+      "inherits": "debug",
+      "displayName": "Debug with sanitizers",
+      "cacheVariables": {
+        "MATCHER_ENABLE_SANITIZERS": "ON"
+      }
     }
   ],
   "buildPresets": [
@@ -43,6 +51,11 @@
       "name": "release",
       "configurePreset": "release",
       "configuration": "Release"
+    },
+    {
+      "name": "sanitizers",
+      "configurePreset": "sanitizers",
+      "configuration": "Debug"
     }
   ],
   "testPresets": [
@@ -58,6 +71,14 @@
       "name": "release",
       "configurePreset": "release",
       "configuration": "Release",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "sanitizers",
+      "configurePreset": "sanitizers",
+      "configuration": "Debug",
       "output": {
         "outputOnFailure": true
       }
