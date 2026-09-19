@@ -79,6 +79,18 @@ TEST(ProtocolTest, OversizedLineIsRejectedWithoutParsing) {
     EXPECT_EQ(response.at("rejection").at("code"), "MESSAGE_TOO_LARGE");
 }
 
+TEST(ProtocolTest, UnsupportedCommandIsRejectedWithoutTerminatingTheProtocol) {
+    ProtocolProcessor processor;
+    const Json unsupported = Json::parse(processor.process_line(
+        R"({"protocolVersion":1,"commandId":"00000000-0000-4000-8000-000000000011","type":"UNSUPPORTED","payload":{}})"));
+    const Json ping = Json::parse(processor.process_line(
+        R"({"protocolVersion":1,"commandId":"00000000-0000-4000-8000-000000000012","type":"PING","payload":{}})"));
+
+    EXPECT_FALSE(unsupported.at("accepted").get<bool>());
+    EXPECT_EQ(unsupported.at("rejection").at("code"), "UNSUPPORTED_COMMAND");
+    EXPECT_TRUE(ping.at("accepted").get<bool>());
+}
+
 TEST(ProtocolTest, AllCrossProcessIntegersAreDecimalStrings) {
     ProtocolProcessor processor;
     const auto sell = processor.process_line(

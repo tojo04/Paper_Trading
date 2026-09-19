@@ -75,13 +75,24 @@ new mutation is accepted.
 - Browser state is a disposable projection that is resynchronized from HTTP after reconnects or
   sequence gaps.
 
+The implemented `MatchingEngineClient` owns one long-lived matcher child, performs a `PING`
+readiness handshake, and keeps at most one command in flight. It correlates the response command ID,
+enforces a timeout and response-size limit, keeps stderr outside the protocol stream, and marks the
+matcher unavailable after a protocol error, broken pipe, or exit. A failed process can restart only
+through the explicit recovery coordinator.
+
+Cancellation uses an order-ID index and a lazy tombstone in the price-level deque. This avoids a
+linear book scan: cancelled entries disappear from snapshots immediately and are physically removed
+when they reach the front of a level. The trade-off is that cancelled entries behind live orders can
+retain memory until that price level advances or the matcher resets.
+
 ## Recovery
 
-PostgreSQL is the recovery authority. On API startup or matcher failure, Node closes the intake
-gate, starts the matcher, sends `RESET`, loads non-terminal LIMIT orders in original engine-sequence
-order, sends `REPLAY_ORDER` for each, compares snapshot totals, restores synthetic liquidity, and
-opens intake only after reconciliation succeeds. Replay never matches and MARKET orders are never
-replayed.
+PostgreSQL is the recovery authority. In the order-orchestration phase, API startup or matcher
+failure will close the intake gate, start the matcher, send `RESET`, load non-terminal LIMIT orders
+in original engine-sequence order, send `REPLAY_ORDER` for each, compare snapshot totals, restore
+synthetic liquidity, and open intake only after reconciliation succeeds. Replay never matches and
+MARKET orders are never replayed.
 
 ## Deployment shape
 

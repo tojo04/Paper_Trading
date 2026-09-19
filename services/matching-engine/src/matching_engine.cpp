@@ -14,6 +14,11 @@ CommandResult accepted_result(const std::string& command_id, const Sequence book
     return CommandResult{
         .command_id = command_id,
         .accepted = true,
+        .rejection = std::nullopt,
+        .order = std::nullopt,
+        .fills = {},
+        .resting_order_updates = {},
+        .snapshot = std::nullopt,
         .book_sequence = book_sequence,
     };
 }
@@ -55,6 +60,10 @@ CommandResult MatchingEngine::reject(
         .command_id = command_id,
         .accepted = false,
         .rejection = Rejection{.code = std::move(code), .message = std::move(message)},
+        .order = std::nullopt,
+        .fills = {},
+        .resting_order_updates = {},
+        .snapshot = std::nullopt,
         .book_sequence = current_sequence_,
     };
     remember_result(result);
@@ -284,4 +293,3 @@ Sequence MatchingEngine::current_sequence() const noexcept {
 }
 
 }  // namespace paper::matching
-

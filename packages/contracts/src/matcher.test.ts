@@ -19,7 +19,10 @@ describe('matcher protocol contracts', () => {
       },
     });
 
-    expect(command.payload.quantity).toBe('9223372036854775807');
+    expect(command.type).toBe('ADD_ORDER');
+    if (command.type === 'ADD_ORDER') {
+      expect(command.payload.quantity).toBe('9223372036854775807');
+    }
   });
 
   it('rejects numeric integer encoding and out-of-range values', () => {
@@ -54,4 +57,3 @@ describe('matcher protocol contracts', () => {
     ).toThrow();
   });
 });
-

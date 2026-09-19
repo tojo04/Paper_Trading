@@ -3,5 +3,5 @@
 {"protocolVersion":1,"commandId":"00000000-0000-4000-8000-000000000003","type":"ADD_ORDER","payload":{"orderId":"10000000-0000-4000-8000-000000000001","participantId":"fixture-seller","instrumentKey":"NSE_EQ|INE002A01018","side":"SELL","orderType":"LIMIT","quantity":"10","limitPricePaise":"10100"}}
 {"protocolVersion":1,"commandId":"00000000-0000-4000-8000-000000000004","type":"ADD_ORDER","payload":{"orderId":"10000000-0000-4000-8000-000000000002","participantId":"fixture-buyer","instrumentKey":"NSE_EQ|INE002A01018","side":"BUY","orderType":"MARKET","quantity":"4"}}
 {"protocolVersion":1,"commandId":"00000000-0000-4000-8000-000000000006","type":"SNAPSHOT_BOOK","payload":{"instrumentKey":"NSE_EQ|INE002A01018"}}
-{"protocolVersion":1,"commandId":"00000000-0000-4000-8000-000000000005","type":"SNAPSHOT_BOOK","payload":{"instrumentKey":"NSE_EQ|INE002A01018"}}
 {"protocolVersion":1,"commandId":"00000000-0000-4000-8000-000000000004","type":"ADD_ORDER","payload":{"orderId":"10000000-0000-4000-8000-000000000002","participantId":"fixture-buyer","instrumentKey":"NSE_EQ|INE002A01018","side":"BUY","orderType":"MARKET","quantity":"4"}}
+{"protocolVersion":1,"commandId":"00000000-0000-4000-8000-000000000005","type":"SNAPSHOT_BOOK","payload":{"instrumentKey":"NSE_EQ|INE002A01018"}}

@@ -248,4 +248,3 @@ export const matcherResponseSchema = z.union([
 export type MatcherCommand = z.infer<typeof matcherCommandSchema>;
 export type MatcherCommandType = z.infer<typeof matcherCommandTypeSchema>;
 export type MatcherResponse = z.infer<typeof matcherResponseSchema>;
-

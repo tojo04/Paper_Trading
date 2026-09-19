@@ -118,6 +118,7 @@ OrderRequest parse_order(const Json& payload) {
         .side = parse_side(required_string(payload, "side")),
         .order_type = parse_order_type(required_string(payload, "orderType")),
         .quantity = parse_integer_string(payload.at("quantity"), "quantity"),
+        .limit_price_paise = std::nullopt,
     };
     if (!looks_like_uuid(order.order_id)) {
         throw ProtocolError("INVALID_ORDER_ID", "orderId must be a UUID");
@@ -360,4 +361,3 @@ std::string ProtocolProcessor::process_line(const std::string& line) {
 }
 
 }  // namespace paper::matching
-

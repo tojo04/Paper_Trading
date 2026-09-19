@@ -34,10 +34,7 @@ async function readFixtureCommands(): Promise<MatcherCommand[]> {
     .map((line) => matcherCommandSchema.parse(JSON.parse(line)));
 }
 
-async function waitForState(
-  client: MatchingEngineClient,
-  expected: 'UNAVAILABLE',
-): Promise<void> {
+async function waitForState(client: MatchingEngineClient, expected: 'UNAVAILABLE'): Promise<void> {
   const deadline = Date.now() + 5_000;
   while (client.state !== expected && Date.now() < deadline) {
     await new Promise((resolveDelay) => setTimeout(resolveDelay, 20));
@@ -49,7 +46,10 @@ function collectLines(child: ChildProcessWithoutNullStreams, count: number): Pro
   return new Promise((resolveLines, rejectLines) => {
     const lines: string[] = [];
     let buffer = '';
-    const timeout = setTimeout(() => rejectLines(new Error('Timed out waiting for matcher output')), 5_000);
+    const timeout = setTimeout(
+      () => rejectLines(new Error('Timed out waiting for matcher output')),
+      5_000,
+    );
 
     child.stdout.setEncoding('utf8');
     child.stdout.on('data', (chunk: string) => {
@@ -87,10 +87,10 @@ describe('real matching engine process', () => {
     clients.push(client);
     await client.start();
 
-    const responses: MatcherResponse[] = [];
-    for (const command of await readFixtureCommands()) {
-      responses.push(await client.send(command));
-    }
+    const commands = await readFixtureCommands();
+    const responses: MatcherResponse[] = await Promise.all(
+      commands.map(async (command) => client.send(command)),
+    );
 
     expect(responses).toHaveLength(7);
     expect(responses[3]).toEqual(responses[5]);
@@ -157,4 +157,3 @@ describe('real matching engine process', () => {
     expect(client.state).toBe('READY');
   });
 });
-

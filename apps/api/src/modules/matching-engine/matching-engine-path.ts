@@ -31,10 +31,7 @@ export function resolveMatchingEngineExecutable(
   const candidates =
     process.platform === 'win32'
       ? [
-          resolve(
-            workspaceRoot,
-            'build/debug/services/matching-engine/Debug/matching-engine.exe',
-          ),
+          resolve(workspaceRoot, 'build/debug/services/matching-engine/Debug/matching-engine.exe'),
           resolve(
             workspaceRoot,
             'build/release/services/matching-engine/Release/matching-engine.exe',
@@ -53,4 +50,3 @@ export function resolveMatchingEngineExecutable(
   }
   return executable;
 }
-

@@ -44,6 +44,7 @@ OrderRequest market_order(
         .side = side,
         .order_type = OrderType::Market,
         .quantity = quantity,
+        .limit_price_paise = std::nullopt,
     };
 }
 
@@ -286,4 +287,3 @@ TEST(MatchingEngineTest, RandomizedCommandsConserveQuantityAcrossEveryFill) {
 
 }  // namespace
 }  // namespace paper::matching
-

@@ -56,7 +56,11 @@ std::vector<PriceLevel> snapshot_levels(const Levels& levels) {
     result.reserve(levels.size());
 
     for (const auto& [price, queue] : levels) {
-        PriceLevel level{.price_paise = price};
+        PriceLevel level{
+            .price_paise = price,
+            .total_quantity = 0,
+            .orders = {},
+        };
         for (const auto& order : queue) {
             if (!order->active || order->remaining_quantity == 0) {
                 continue;

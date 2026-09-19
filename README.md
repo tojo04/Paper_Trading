@@ -7,8 +7,9 @@ places a broker or exchange order.**
 > Simulated fills use synthetic liquidity derived from Upstox reference prices; no order is sent to
 > an exchange.
 
-Phases 0 and 1 establish the domain contract and a runnable monorepo. Trading workflows are
-intentionally not implemented yet.
+Phases 0 through 4 establish the domain contract, durable schema, deterministic C++ matcher, and
+the versioned Node-to-C++ IPC boundary. Account and HTTP order workflows are intentionally not
+implemented yet.
 
 ## Repository map
 
@@ -16,7 +17,7 @@ intentionally not implemented yet.
 apps/web/                 React, TypeScript, Vite, Tailwind CSS
 apps/api/                 Fastify and PostgreSQL readiness
 packages/contracts/       Shared Zod schemas and TypeScript types
-services/matching-engine/ C++20 process scaffold and PING harness
+services/matching-engine/ C++20 price-time-priority matcher and NDJSON process
 tests/e2e/                Reserved for the later Playwright journey
 docs/                     Architecture, domain rules, API examples, and ADRs
 ```
@@ -76,9 +77,9 @@ Open <http://localhost:5173>. The page reads API readiness from
 <http://localhost:3000/health/ready>. Liveness is available at `/health/live`; readiness returns
 HTTP 503 until PostgreSQL answers `SELECT 1`.
 
-## C++ scaffold
+## Matching engine
 
-Configure, compile, and run its platform-neutral PING smoke test:
+Configure, compile, and run the matcher tests:
 
 ```bash
 cmake --preset debug
@@ -86,8 +87,27 @@ cmake --build --preset debug
 ctest --preset debug --output-on-failure
 ```
 
-The executable accepts `--ping`, or a line containing `PING` on stdin, and returns `PONG`. This is a
-Phase 1 harness, not the matcher protocol introduced in later phases.
+The executable is a long-lived, single-writer process. It reads one versioned JSON command per
+stdin line and writes exactly one JSON response per stdout line; diagnostics are written to stderr.
+It supports LIMIT and MARKET matching, cancellation, reset/replay, snapshots, and duplicate-command
+idempotency. All 64-bit prices, quantities, and sequences cross IPC as decimal strings.
+
+The API client discovers the debug or release executable under `build/`. Set
+`MATCHING_ENGINE_EXECUTABLE` to an absolute executable path to override discovery. Run the real
+cross-process integration suite with:
+
+```bash
+pnpm test:integration -- matcher-ipc
+```
+
+The separate sanitizer preset enables AddressSanitizer and UndefinedBehaviorSanitizer with GCC or
+Clang (MSVC supports the AddressSanitizer portion):
+
+```bash
+cmake --preset sanitizers
+cmake --build --preset sanitizers
+ctest --preset sanitizers --output-on-failure
+```
 
 ## Quality gate
 
@@ -105,8 +125,9 @@ docker compose config
 
 ## Current limitations
 
-There is no database schema, authentication, market-data feed, order flow, or matching logic yet.
-Those are deliberately reserved for later phases so each authority boundary can be tested before
-features depend on it.
+The database schema and matcher boundary exist, but authentication, market-data adapters, HTTP
+order orchestration, wallet/portfolio settlement, browser realtime events, and recovery from
+PostgreSQL are reserved for later phases. The recovery coordinator currently controls matcher
+restart; replaying durable orders will be wired when order persistence is implemented.
 
 # Paper_Trading

@@ -59,9 +59,9 @@ export class MatchingEngineClient {
   private readonly executablePath: string;
   private readonly logger: (event: MatchingEngineLogEvent) => void;
   private readonly maximumResponseLineBytes: number;
-  private child?: ChildProcessWithoutNullStreams;
+  private child: ChildProcessWithoutNullStreams | undefined;
   private hasStarted = false;
-  private inFlight?: PendingCommand;
+  private inFlight: PendingCommand | undefined;
   private readonly queue: PendingCommand[] = [];
   private responseBuffer = '';
   private stateValue: MatchingEngineClientState = 'STOPPED';
@@ -369,4 +369,3 @@ export class MatchingEngineRecoveryCoordinator {
     await client.restartForRecovery(recoveryAuthorization);
   }
 }
-
