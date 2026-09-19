@@ -28,3 +28,5 @@ test-results/
 .DS_Store
 Thumbs.db
 
+AGENTS.md
+BUILD_STEPS.md
